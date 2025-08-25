@@ -24,7 +24,7 @@ app.use((req, res, next) => {
 app.use(helmet());
 app.use(cors({
   origin: [
-    'https://c-folio-e4po.vercel.app/',
+    'https://c-folio-e4po.vercel.app',
     'http://localhost:5173'
      ],
   credentials: true,
