@@ -23,9 +23,10 @@ app.use((req, res, next) => {
 });
 app.use(helmet());
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? process.env.FRONTEND_PROD_URL 
-    : 'http://localhost:5173',
+  origin: [
+    'https://c-folio-e4po.vercel.app/',
+    'http://localhost:5173'
+     ],
   credentials: true,
   exposedHeaders: ['Authorization']
 }));
