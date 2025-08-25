@@ -32,6 +32,9 @@ app.use(cors({
 
 // Body parser
 app.use(express.json());
+app.get('/', (req, res) => {
+  res.send('CFolio backend is running!');
+});
 
 // Routes
 app.use('/api/leetcode', leetcodeRoutes);
