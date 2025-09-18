@@ -16,6 +16,7 @@ const Dashboard = () => {
   const { session } = UserAuth();
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const API_BASE = import.meta.env.VITE_BACKEND_URL;
 
   const user = {
@@ -38,6 +39,7 @@ const Dashboard = () => {
 
       try {
         setLoading(true);
+        setError(null);
         const response = await fetch(`${API_BASE}/api/dashboard/${session.user.id}`, {
           headers: {
             'Authorization': `Bearer ${session.access_token}`
@@ -49,10 +51,11 @@ const Dashboard = () => {
         }
 
         const data = await response.json();
-        console.log(data);
         setDashboardData(data);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
+        setError("Some data could not be loaded. Please try again later.");
+        setDashboardData(null);
       } finally {
         setLoading(false);
       }
@@ -117,18 +120,18 @@ const Dashboard = () => {
     };
   };
 
-  // if (loading) {
-  //   return (
-  //     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-  //       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-  //     </div>
-  //   );
-  // }
-
   const leetCodeBreakdown = getLeetCodeBreakdown();
   const leetCodeRating = getContestRating('leetcode');
   const codechefRating = getContestRating('codechef');
   const codeforcesRating = getContestRating('codeforces');
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -304,6 +307,11 @@ const Dashboard = () => {
 
         {/* Main Content */}
         <div className="flex-1 p-6 overflow-y-auto">
+          {error && (
+            <div className="mb-6 p-4 bg-red-100 text-red-700 rounded-lg border border-red-300">
+              {error}
+            </div>
+          )}
 
           <CombinedHeatmap profileData={profileData} />
 
@@ -565,8 +573,7 @@ const Dashboard = () => {
                   </div>
                   <div className="flex justify-between w-full text-xs text-gray-400">
                     <span>0</span>
-                    <span>Max: {leetCodeRating.max ? Math.round(leetCodeRating.recent) : 'N/A'}
-</span>
+                    <span>Max: {leetCodeRating.max ? Math.round(leetCodeRating.max) : 'N/A'}</span>
                   </div>
                 </div>
               </motion.div>

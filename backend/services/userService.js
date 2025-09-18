@@ -1,7 +1,3 @@
-// Example usage in an Express route/controller:
-// const authHeader = req.headers['authorization'];
-// const accessToken = authHeader && authHeader.split(' ')[1]; // Only the JWT part
-// await userService.updateProfile(accessToken, userId, profileData);
 const { createClient } = require('@supabase/supabase-js');
 
 function getSupabaseClient(accessToken) {
@@ -17,6 +13,9 @@ function getSupabaseClient(accessToken) {
 class userService {
   // Pass accessToken as first argument to each method
   static async updateProfile(accessToken, id, profileData) {
+    if (!accessToken || accessToken.split('.').length !== 3) {
+      throw new Error("Invalid JWT token format in updateProfile");
+    }
     const supabase = getSupabaseClient(accessToken);
     const { data, error } = await supabase
       .from('profiles')
@@ -33,6 +32,9 @@ class userService {
   }
 
   static async getEmail(accessToken, id) {
+    if (!accessToken || accessToken.split('.').length !== 3) {
+      throw new Error("Invalid JWT token format in getEmail");
+    }
     const supabase = getSupabaseClient(accessToken);
     const { data, error } = await supabase
       .from('auth.users')
@@ -43,12 +45,17 @@ class userService {
   }
 
   static async getProfile(accessToken, id) {
+    if (!accessToken || accessToken.split('.').length !== 3) {
+      throw new Error("Invalid JWT token format in getProfile");
+    }
     const supabase = getSupabaseClient(accessToken);
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', id)
-    if (error) throw new Error(error.message);
+    if (error) 
+      {console.log("[userService] Error fetching profile:", error.message);
+        throw new Error(error.message);}
     return data;
   }
 }

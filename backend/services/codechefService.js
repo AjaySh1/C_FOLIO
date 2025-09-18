@@ -76,44 +76,45 @@ const codechefService = {
   },
 
   async extractSubmissionHeatmap(username) {
-    try {
-      const apiUrl = `https://codechef-api.vercel.app/handle/${username}`;
-      console.log(`Fetching heatmap data from API: ${apiUrl}`);
+  try {
+    const apiUrl = `https://codechef-api.vercel.app/handle/${username}`;
 
-      const response = await axios.get(apiUrl);
+    const response = await axios.get(apiUrl);
 
-      if (!response.data || !response.data.success) {
-        console.error("API returned error:", response.data);
-        throw new Error("Failed to fetch heatmap data from API");
-      }
-
-      const heatmapData = response.data.heatMap || [];
-
-      const activeDays = heatmapData.length;
-
-      // Calculate total submissions
-      let totalSubmissions = 0;
-      heatmapData.forEach((day) => {
-        totalSubmissions += parseInt(day.value || 0);
-      });
-
-      const formattedData = heatmapData.map((day) => ({
-        date: day.date,
-        count: parseInt(day.value || 0),
-      }));
-
-      // Return the formatted data
+    if (!response.data || !response.data.success) {
       return {
-        activeDays,
-        totalSubmissions,
-        heatmapData: formattedData,
+        activeDays: 0,
+        totalSubmissions: 0,
+        heatmapData: [],
       };
-    } catch (error) {
-      console.error("Error extracting submission heatmap:", error);
-      throw new Error(`Failed to extract submission heatmap: ${error.message}`);
     }
-  },
 
+    const heatmapData = response.data.heatMap || [];
+    const activeDays = heatmapData.length;
+    let totalSubmissions = 0;
+    heatmapData.forEach((day) => {
+      totalSubmissions += parseInt(day.value || 0);
+    });
+
+    const formattedData = heatmapData.map((day) => ({
+      date: day.date,
+      count: parseInt(day.value || 0),
+    }));
+
+    return {
+      activeDays,
+      totalSubmissions,
+      heatmapData: formattedData,
+    };
+  } catch (error) {
+    // Return fallback data instead of throwing
+    return {
+      activeDays: 0,
+      totalSubmissions: 0,
+      heatmapData: [],
+    };
+  }
+},
   async extractContestGraph(username) {
     try {
       // Fetch the contest data

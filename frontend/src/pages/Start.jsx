@@ -195,7 +195,7 @@ export default function Home() {
             </div>
 
             <p className="text-sm text-gray-400">
-              © 2025 CPier. All rights reserved.
+              © 2025 CFolio. All rights reserved.
             </p>
           </div>
         </div>

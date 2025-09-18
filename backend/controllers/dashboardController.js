@@ -25,8 +25,11 @@ class DashboardController {
 
   static async getDashboardData(req, res) {
     try {
+      console.log("Calling DashboardService.getDashboardData...");
       const userId = req.params.id;
-      const result = await DashboardService.getDashboardData(userId);
+      const authHeader = req.headers['authorization'];
+      const accessToken = authHeader && authHeader.split(' ')[1];
+      const result = await DashboardService.getDashboardData(accessToken, userId);
       res.status(200).json(result);
     } catch (error) {
       res.status(400).json({ error: error.message });
